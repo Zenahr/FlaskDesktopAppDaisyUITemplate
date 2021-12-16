@@ -13,4 +13,4 @@ def hello():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    # ui.run()
+    # ui.run() # toggle this line and comment out the above line to turn the web app into a desktop app.
