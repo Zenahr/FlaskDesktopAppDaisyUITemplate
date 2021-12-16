@@ -1,7 +1,9 @@
 # Get it running
 
 create a virtual environment (or don't)
+
 run `pip install -r requirements.txt`
+
 run the `app.py` script and you should be good to go!
 
 # The stuff
