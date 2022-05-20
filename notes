@@ -1,0 +1,9 @@
+https://stackoverflow.com/questions/54316480/pyinstaller-with-pandas-and-numpy-exe-throws-error-at-runtime
+https://stackoverflow.com/a/54422827/12675239
+Use Python 3.8.6
+https://github.com/ihabunek/twitch-dl/issues/72
+use pyinstaller 4.7
+include https://github.com/ihabunek/twitch-dl/tree/master/twitchdl in executable file/archive and work with it programmatically OR turn it into a standalone executable file
+https://stackoverflow.com/questions/16742203/create-a-python-executable-using-setuptools
+
+https://github.com/abhiTronix/vidgear

@@ -5,26 +5,195 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>title</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.5/dist/full.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
-  
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@2.6.0/dist/full.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap');
         body {
             font-family: 'Roboto', sans-serif;
         }
+        #appStatus {
+            transition: all 0.5s;
+        }
+
+        #progress {
+            background: rgba(0, 0, 0, .9);
+            display: block;
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 10000;
+            visibility: hidden;
+            transition: all 0.5s;
+        }
+        
+        .lds-ripple {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+          }
+          .lds-ripple div {
+            position: absolute;
+            border: 4px solid #fff;
+            opacity: 1;
+            border-radius: 50%;
+            animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+          }
+          .lds-ripple div:nth-child(2) {
+            animation-delay: -0.5s;
+          }
+          @keyframes lds-ripple {
+            0% {
+              top: 36px;
+              left: 36px;
+              width: 0;
+              height: 0;
+              opacity: 0;
+            }
+            4.9% {
+              top: 36px;
+              left: 36px;
+              width: 0;
+              height: 0;
+              opacity: 0;
+            }
+            5% {
+              top: 36px;
+              left: 36px;
+              width: 0;
+              height: 0;
+              opacity: 1;
+            }
+            100% {
+              top: 0px;
+              left: 0px;
+              width: 72px;
+              height: 72px;
+              opacity: 0;
+            }
+          }
+
     </style>
 </head>
-<body>
+<body style="min-height: 100vh;">
 
-    <div data-theme="cupcake" class="artboard phone-2 horizontal artboard-demo mx-auto bg-neutral">
-        <form action="/" method="post">
-            <button type="submit">Submit</button>
-        </form>
-
-        <div class="mx-auto mt-8">
-            <h1 class="text-2xl">Title</h1>
+    <div id="progress">
+        <div class="grid justify-items-center items-center h-screen">
+            <div class="lds-ripple"><div></div></div>
+            <p><span class="appStatus text-2xl font-bold">initializing ...</span></p>
         </div>
+    </div>
+    <div class="navbar bg-base-300">
+        <div class="mx-auto">
+          <a class="btn btn-ghost normal-case text-xl text-center">TwitchClips2YouTubeCompilation</a>
+        </div>
+        <div class="flex-none  text-center">
+          <button class="btn btn-square btn-ghost">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+          </button>
+        </div>
+      </div>
+
+    <div class="mx-auto mt-8">
+        <h1 class="text-2xl"></h1>
+    </div>
+    <div data-theme="dark" class="artboard phone-2 horizontal artboard-demo mx-auto text-center bg-neutral">
+        <form>
+            <input type="text" name="ttvChannel" required placeholder="Twitch channel name ..." class="input input-bordered w-full max-w-xs text-center mb-2" />
+            <div class="options">
+                <div class="container text-left text-2xl">
+                    <!-- <h1>Options</h1> -->
+                    <div class="flex flex-wrap">
+                        <div class="w-1/2">
+                            <!-- <label for="period">Time period</label> -->
+                            <select name="period" class="select select-primary w-full max-w-xs">
+                              <option value="all_time">anytime</option>
+                              <option value="last_day">last day</option>
+                              <option value="last_week">last week</option>
+                              <option value="last_month">last month</option>
+                            </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg">download clips and generate compilation video</button>
+        </form>
     </div> 
+    <footer class="sticky top-[100vh] text-left">
+        <div class="container mt-2">
+            <p>app status: <span class="appStatus">initializing ...</span></p>
+            <p>Resulting video length: <span class="compilationLength"></span></p>
+        </div>
+    </footer>
+
+    <script>
+
+        function toggleProgress(show) {
+            if (show) {
+                document.getElementById('progress').style.visibility = 'visible';
+            } else {
+                document.getElementById('progress').style.visibility = 'hidden';
+            }
+        }
+
+        setInterval(() => {
+            fetch('/api/status')
+                .then(res => res.json())
+                .then(data => {
+                    let statuses = document.getElementsByClassName('appStatus')
+
+                    if (data.status !== 'ready') {
+                     toggleProgress(true);
+                    }
+                    else {
+                     toggleProgress(false);
+                    }
+                    for (let i = 0; i < statuses.length; i++) {
+                        statuses[i].innerHTML = data.status;
+                    }
+                });
+        }, 2000);
+
+        setInterval(() => {
+            fetch('/api/compilationLength')
+                .then(res => res.json())
+                .then(data => {
+                    let length_display= document.getElementsByClassName('compilationLength')
+                    // for each element, set the innerHTML to the data
+                    for (let i = 0; i < length_display.length; i++) {
+                        length_display[i].innerHTML = data.compilationLength;
+                    }
+                });
+        }, 2000);
+    
+        const form = document.querySelector('form');
+
+        // send form data to server
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            fetch('/api/do', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    channel: formData.get('ttvChannel'),
+                    period: formData.get('period')
+                    }
+                )
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                });
+            toggleProgress(false);
+        });
+
+    </script>
+
 </body>
 </html>

@@ -1,0 +1,2 @@
+pyinstaller --name="TTV2YT" --noconsole --paths=env\Lib\site-packages --add-data="static;static" --add-data="templates;templates" --add-data="upload_to_youtube.bat;." --add-data="upload_to_youtube.py;." --add-data="youtube-api-creds-web.json;." --add-data="additional_libs/ffmpeg.exe;." --add-data="additional_libs/twitch-dl.exe;." app.py --icon=app.ico --copy-metadata flask --hidden-import=moviepy --hidden-import=numpy --noconfirm
+mkdir "dist/TTV2YT/clips"
